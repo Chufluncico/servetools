@@ -15,33 +15,17 @@
                 Inicio
             </flux:sidebar.item>
 
-            <flux:sidebar.group icon="star" :heading="__('Radiologia')" class="grid">
-                
-            </flux:sidebar.group>
-
-            <flux:sidebar.item icon="home" :href="route('dashboard')">
+            <flux:sidebar.group expandable :expanded="request()->routeIs('radiologia.*')" icon="radiation" :heading="__('Radiologia')" class="grid">
+                <flux:sidebar.item :href="route('radiologia.modalidades')" :current="request()->routeIs('radiologia.modalidades')">
                     {{ __('Registro Modalidades') }}
                 </flux:sidebar.item>
-
-            <flux:sidebar.item icon="inbox" badge="12" href="#">Inbox</flux:sidebar.item>
-
-            <flux:sidebar.item icon="document-text" href="#">Documents</flux:sidebar.item>
-            <flux:sidebar.item icon="calendar" href="#">Calendar</flux:sidebar.item>
-
-            <flux:sidebar.group expandable icon="star" heading="Favorites" class="grid">
-                <flux:sidebar.item href="#">Marketing site</flux:sidebar.item>
-                <flux:sidebar.item href="#">Android app</flux:sidebar.item>
-                <flux:sidebar.item href="#">Brand guidelines</flux:sidebar.item>
             </flux:sidebar.group>
-
-            <flux:sidebar.item icon="document-text" href="#">Documents</flux:sidebar.item>
-            <flux:sidebar.item icon="calendar" href="#">Calendar</flux:sidebar.item>
         </flux:sidebar.nav>
 
         <flux:sidebar.spacer />
 
         <flux:sidebar.nav>
-            <flux:sidebar.item icon="cog-6-tooth" :href="route('adminPanel.index')" :current="request()->routeIs('adminPanel.index')">Admin Panel</flux:sidebar.item>
+            <flux:sidebar.item icon="settings" :href="route('adminPanel.index')" :current="request()->routeIs('adminPanel.index')">Admin Panel</flux:sidebar.item>
         </flux:sidebar.nav>
 
         <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />

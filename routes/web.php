@@ -12,6 +12,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 
 
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::view('radiologia/modalidades', 'vistas.radiologia.modalidades')->name('radiologia.modalidades');
+
+});
+
+
 Route::middleware(['auth', 'verified', 'role:superadmin|admin|informatica'])->group(function () {
 
     Route::view('adminPanel', 'vistas.adminPanel.index')->name('adminPanel.index');
