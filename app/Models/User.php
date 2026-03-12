@@ -65,4 +65,28 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    /**
+     * Esto es un scope que recibe automaticamente como primer parametro la query y como segundo parametro lo que pasas manualmente
+     * Luego se utiliza ->search()
+     * Si se escriben como minimo tres letras se actica la busqueda
+     */
+    public function scopeSearch($query, $term)
+    {
+        if (!$term || strlen($term) < 3) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($term) {
+            $q->where('name', 'like', "%{$term}%")
+              ->orWhere('email', 'like', "%{$term}%");
+        });
+    }
+
+
+
+
+
+
+
 }
