@@ -17,7 +17,7 @@
 
             <flux:sidebar.group expandable :expanded="request()->routeIs('radiologia.*')" icon="radiation" :heading="__('Radiologia')" class="grid">
                 <flux:sidebar.item :href="route('radiologia.modalidades')" :current="request()->routeIs('radiologia.modalidades')">
-                    {{ __('Registro Modalidades') }}
+                    {{ __('Inventario Modalidades') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>
         </flux:sidebar.nav>

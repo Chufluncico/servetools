@@ -25,7 +25,7 @@ new class extends Component
 
 <div>
 
-    <flux:navbar>
+    <flux:navbar class="mb-4">
         <flux:navbar.item 
             :current="$viewTab === 'usuarios'"
             wire:click="setView('usuarios')">

@@ -33,9 +33,9 @@ new class extends Component
 
     <flux:table :paginate="$this->permisos">
         <flux:table.columns>
-            <flux:table.column sorted direction="desc">Nombre</flux:table.column>
+            <flux:table.column sortable>Nombre</flux:table.column>
             <flux:table.column sortable sorted direction="desc">Rol</flux:table.column>
-            <flux:table.column sortable></flux:table.column>
+            <flux:table.column></flux:table.column>
         </flux:table.columns>
 
         <flux:table.rows>
