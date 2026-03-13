@@ -107,7 +107,7 @@ new class extends Component
         <div class="flex justify-between items-center mb-2">
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Buscar" class="md:max-w-1/3" />
             <flux:spacer />
-            <flux:button icon="plus" variant="primary">Usuario</flux:button>
+            <flux:button icon="plus" variant="primary" wire:click="$dispatch('open-user-form')">Usuario</flux:button>
         </div>    
 
         <flux:table :paginate="$this->usuarios" pagination:scroll-to>
@@ -167,6 +167,9 @@ new class extends Component
             </flux:table.rows>
         </flux:table>
     </div>
+
+
+    <livewire:admin-panel.usuarios.form />
 
 
 </div>
