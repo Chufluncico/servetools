@@ -17,30 +17,33 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        $permissions = [
 
-        // create permissions
-        Permission::create(['name' => 'create.users']);
-        Permission::create(['name' => 'create.rol']);
-        Permission::create(['name' => 'create.permission']);
+            'users.view',
+            'users.create',
+            'users.edit',
+            'users.delete',
 
-        // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+            'roles.view',
+            'roles.create',
+            'roles.edit',
+            'roles.delete',
 
+        ];
 
-        // create roles and assign created permissions
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'web'
+            ]);
+        }
 
-        // this can be done as separate statements
-        $role = Role::create(['name' => 'informatica']);
-        $role->givePermissionTo('create.users');
+        $superadmin = Role::firstOrCreate(['name' => 'superadmin']);
+        $admin = Role::firstOrCreate(['name' => 'admin']);
+        $tecnico = Role::firstOrCreate(['name' => 'tecnico']);
+        $informatica = Role::firstOrCreate(['name' => 'informatica']);
 
-        // or may be done by chaining
-        $role = Role::create(['name' => 'admin'])
-            ->givePermissionTo(['create.rol', 'create.users']);
-
-        $superAdmin = Role::create(['name' => 'superadmin']);
-        $superAdmin->givePermissionTo(Permission::all());
+        $superadmin->givePermissionTo(Permission::all());
 
 
         // ===== USUARIO SUPERADMIN =====
@@ -51,7 +54,7 @@ class PermissionSeeder extends Seeder
                 'password' => Hash::make('Jarritas1981'),
             ]
         );
-        $user->assignRole($superAdmin);
+        $user->assignRole($superadmin);
 
 
     }

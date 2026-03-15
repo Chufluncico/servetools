@@ -12,9 +12,16 @@ trait PasswordValidationRules
      *
      * @return array<int, Rule|array<mixed>|string>
      */
+    /*
     protected function passwordRules(): array
     {
         return ['required', 'string', Password::default(), 'confirmed'];
+    }
+    */
+
+    protected function passwordRules(): array
+    {
+        return ['required', 'string', 'min:10', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'confirmed'];
     }
 
     /**

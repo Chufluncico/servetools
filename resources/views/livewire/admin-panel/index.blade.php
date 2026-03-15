@@ -13,8 +13,8 @@ new class extends Component
         if (! in_array($tab, ['usuarios', 'roles', 'permisos'])) {
             return;
         }
-
         $this->viewTab = $tab;
+        //$this->reset();
     }
 
 
@@ -47,11 +47,11 @@ new class extends Component
 
 
     @if($viewTab === 'roles')
-        <livewire:admin-panel.roles.index />
+        <livewire:admin-panel.roles.index :key="'roles-'.$viewTab" />
     @elseif($viewTab === 'permisos')
-        <livewire:admin-panel.permisos.index />
+        <livewire:admin-panel.permisos.index :key="'permisos-'.$viewTab" />
     @else($viewTab === 'usuarios')
-        <livewire:admin-panel.usuarios.index />
+        <livewire:admin-panel.usuarios.index :key="'usuarios-'.$viewTab" />
     @endif
 
 
