@@ -6,7 +6,7 @@ Utiliza el kit de inicio Livewire e implementa la gestion de permisos mediante S
 ## Instalación y arranque
 
 ```bash
-git clone https://github.com/Chufluncico/Laravel-Pilar.git
+git clone https://github.com/Chufluncico/Laravel-Pilar.git mi-proyecto
 
 composer install
 
