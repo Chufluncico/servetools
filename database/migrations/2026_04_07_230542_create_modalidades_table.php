@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('modalidades', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('aet');
+            $table->string('servicio');
+            $table->ipAddress('ip');
+            $table->boolean('syngo');
+            $table->json('extra');
             $table->timestamps();
             $table->softDeletes();
         });

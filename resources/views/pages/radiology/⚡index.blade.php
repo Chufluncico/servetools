@@ -84,8 +84,11 @@ new #[Title('Modalities')] class extends Component
                 @endcan
             </div>        
 
-            <div class="flex-col space-y-6 gap-6">
+            <div class="flex-col space-y-3 mt-6">
                 @forelse($this->modalidades as $modalidad)
+
+                    @include('partials.radiology.modalidad')
+       
                     <div class="bg-white rounded-md p-6 border-1 border-zinc-200 dark:border-zinc-600">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="font-semibold text-lg">

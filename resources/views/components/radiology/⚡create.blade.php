@@ -24,6 +24,7 @@ new class extends Component {
         $this->authorize('create', Modalidad::class);
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255', 'unique:modalidades,name'],
+            'ip' => ['ip'],
         ]);
         $modality = Modalidad::create([
             'name' => $validated['name'],
@@ -47,10 +48,26 @@ new class extends Component {
 <flux:modal wire:model.self="showModal">
     <div class="space-y-6">
         <flux:heading size="lg">
-            {{ __('New modality') }}
+            {{ __('rx.new_modality') }}
         </flux:heading>
 
-        <flux:input wire:model="name" label="{{ __('Modality name') }}" />
+        <flux:input wire:model="name" label="{{ __('rx.modality_name') }}" />
+
+<flux:field>
+    <flux:label>Website</flux:label>
+
+    <flux:input.group>
+
+        <flux:input wire:model="website" placeholder="example.com" />
+        <flux:input wire:model="website" placeholder="example.com" />
+        <flux:input wire:model="website" placeholder="example.com" />
+        <flux:input wire:model="website" placeholder="example.com" />
+
+    </flux:input.group>
+
+    <flux:error name="website" />
+</flux:field>
+
 
         <div class="flex justify-end gap-3">
             <flux:button type="button" wire:click="$set('showModal', false)">
