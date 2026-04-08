@@ -1,9 +1,4 @@
 <div class="flex items-start flex-col">
-    <flux:navbar class="mb-6">
-        <flux:navbar.item href="{{ route('admin-panel.users') }}" :current="request()->routeIs('admin-panel.users*')">Users</flux:navbar.item>
-        <flux:navbar.item href="{{ route('admin-panel.roles') }}" :current="request()->routeIs('admin-panel.roles*')">Roles</flux:navbar.item>
-    </flux:navbar>
-
     <div class="relative w-full mb-6">
         <flux:heading size="xl" level="1">{{ $heading ?? '' }}</flux:heading>
         <flux:subheading size="lg" class="mb-6">{{ $subheading ?? '' }}</flux:subheading>

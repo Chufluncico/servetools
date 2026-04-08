@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use Carbon\CarbonImmutable;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
 use App\Policies\UserPolicy;
+use Spatie\Permission\Models\Role;
 use App\Policies\RolePolicy;
+use App\Models\Modalidad;
+use App\Policies\ModalidadPolicy;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(Modalidad::class, ModalidadPolicy::class);
     }
 
     /**

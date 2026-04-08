@@ -11,12 +11,18 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
+                <flux:sidebar.item icon="hospital" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    {{ __('Home') }}
+                </flux:sidebar.item>
             </flux:sidebar.nav>
+
+            <flux:sidebar.group icon="radiation" 
+            expandable 
+            :expanded="request()->routeIs('radiology*')"
+            heading="{{ __('rx.radiology') }}" 
+            class="grid">
+                <flux:sidebar.item :href="route('radiology.modalities')" :current="request()->routeIs('radiology.modalities')" wire:navigate>{{ __('rx.modalities') }}</flux:sidebar.item>
+            </flux:sidebar.group>
 
             <flux:spacer />
 

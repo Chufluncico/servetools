@@ -68,32 +68,37 @@ new class extends Component {
             {{ __('New user') }}
         </flux:heading>
 
-        <flux:input wire:model="name" label="{{ __('User name') }}" />
-        <flux:input wire:model="email" label="{{ __('User mail') }}" />
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="space-y-5">
+                <flux:input wire:model="name" label="{{ __('User name') }}" />
+                <flux:input wire:model="email" label="{{ __('User mail') }}" />
 
-        <flux:input 
-            wire:model="password"
-            type="password"
-            label="{{ __('Password') }}"
-        />
+                <flux:input 
+                    wire:model="password"
+                    type="password"
+                    label="{{ __('Password') }}"
+                />
 
-        <flux:input 
-            wire:model="password_confirmation"
-            type="password"
-            label="{{ __('Password confirmation') }}"
-        />
+                <flux:input 
+                    wire:model="password_confirmation"
+                    type="password"
+                    label="{{ __('Password confirmation') }}"
+                />
+            </div>
+            <div >
+                <div>
+                    <label class="block text-sm mb-2">{{ __('Roles') }}</label>
 
-        <div>
-            <label class="block text-sm mb-2">{{ __('Roles') }}</label>
-
-            <div class="flex-col space-y-2">
-                @foreach($this->availableRoles as $role)
-                    <flux:checkbox 
-                        wire:model="roles" 
-                        value="{{ $role }}" 
-                        label="{{ $role }}" 
-                    /> 
-                @endforeach
+                    <div class="flex-col space-y-2">
+                        @foreach($this->availableRoles as $role)
+                            <flux:checkbox 
+                                wire:model="roles" 
+                                value="{{ $role }}" 
+                                label="{{ $role }}" 
+                            /> 
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
 

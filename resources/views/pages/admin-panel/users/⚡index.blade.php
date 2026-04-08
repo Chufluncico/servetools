@@ -67,7 +67,7 @@ new #[Title('Users Administration')] class extends Component
 ?>
 
 <section class="w-full">
-    <x-pages::admin-panel.layout :heading="__('Users Management')" :subheading="__('Manage users and their roles')">
+    <x-pages::admin-panel.layout :heading="__('admin-panel.users_heading')" :subheading="__('admin-panel.users_subheading')">
         <div class="border-1 p-4 rounded-md border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700">
             <div class="flex mb-4">
                 <flux:input class="flex-1"
@@ -82,7 +82,7 @@ new #[Title('Users Administration')] class extends Component
                     <flux:button variant="primary"
                         wire:click="$dispatch('create-user')"
                     >
-                        {{ __('Add user') }}
+                        {{ __('admin-panel.add_user') }}
                     </flux:button>
                 @endcan
             </div>

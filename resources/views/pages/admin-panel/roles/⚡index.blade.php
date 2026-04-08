@@ -64,7 +64,7 @@ new #[Title('Roles Administration')] class extends Component
 ?>
 
 <section class="w-full">
-    <x-pages::admin-panel.layout :heading="__('Roles Management')" :subheading="__('Manage roles and permissions')">
+    <x-pages::admin-panel.layout :heading="__('admin-panel.roles_heading')" :subheading="__('admin-panel.roles_subheading')">
         <div class="border-1 p-4 rounded-md border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700">
             <div class="flex mb-4">
                 <flux:spacer />
