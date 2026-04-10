@@ -24,7 +24,7 @@ new class extends Component {
         $this->authorize('create', Modalidad::class);
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255', 'unique:modalidades,name'],
-            'ip' => ['ip'],
+            'ip' => ['ip', 'unique:modalidades,ip'],
         ]);
         $modality = Modalidad::create([
             'name' => $validated['name'],
@@ -42,10 +42,11 @@ new class extends Component {
         }
     }
 
+
 };
 ?>
 
-<flux:modal wire:model.self="showModal">
+<flux:modal wire:model.self="showModal" :dismissible="false" :closable="false" flyout position="right">
     <div class="space-y-6">
         <flux:heading size="lg">
             {{ __('rx.new_modality') }}
@@ -53,26 +54,22 @@ new class extends Component {
 
         <flux:input wire:model="name" label="{{ __('rx.modality_name') }}" />
 
-<flux:field>
-    <flux:label>Website</flux:label>
+        <flux:field>
+            <flux:label>{{ __('rx.ip_address') }}</flux:label>
 
-    <flux:input.group>
+            <flux:input 
+                wire:model="ip" 
+                pattern="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" 
+                x-mask:dynamic="[ ...$input.split('.').map( (x, index, array) => '9'.repeat( x.length > 0 && x.length < 3 ? x.length + ( index === array.length -1 ? 1 : 0 ) : 3 ) ),'999','999','999','999'].splice(0,4).join('.')"
+            />
 
-        <flux:input wire:model="website" placeholder="example.com" />
-        <flux:input wire:model="website" placeholder="example.com" />
-        <flux:input wire:model="website" placeholder="example.com" />
-        <flux:input wire:model="website" placeholder="example.com" />
-
-    </flux:input.group>
-
-    <flux:error name="website" />
-</flux:field>
-
+            <flux:error name="ip" />
+        </flux:field>
 
         <div class="flex justify-end gap-3">
-            <flux:button type="button" wire:click="$set('showModal', false)">
-                {{ __('Cancel') }}
-            </flux:button>
+            <flux:modal.close>
+                <flux:button variant="ghost">{{ __('Cancel') }}</flux:button>
+            </flux:modal.close>
 
             <flux:button variant="primary" wire:click="create" wire:loading.attr="disabled">
                 {{ __('Save') }}

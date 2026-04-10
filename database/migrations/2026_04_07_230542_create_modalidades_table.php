@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('aet');
-            $table->string('servicio');
+            $table->string('department');
+            $table->string('location');
             $table->ipAddress('ip');
             $table->boolean('syngo');
-            $table->json('extra');
+            $table->json('extra_data');
             $table->timestamps();
             $table->softDeletes();
         });

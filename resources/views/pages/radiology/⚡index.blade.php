@@ -37,6 +37,11 @@ new #[Title('Modalities')] class extends Component
         $this->resetPage();
     }
 
+    public function updatedSearchField()
+    {
+        $this->resetPage();
+    }
+
     #[On('modality-created')]
     #[On('modality-updated')]
     #[On('modality-deleted')]
@@ -44,6 +49,64 @@ new #[Title('Modalities')] class extends Component
     {
         $this->resetPage();
     }
+
+    public function export()
+{
+    $fileName = 'modalidades_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+    $modalidades = Modalidad::query()
+        ->when(trim($this->search) !== '', function ($query) {
+
+            $search = '%' . trim($this->search) . '%';
+
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', $search)
+                  ->orWhere('ip', 'like', $search)
+                  ->orWhere('location', 'like', $search)
+                  ->orWhere('department', 'like', $search)
+                  ->orWhere('aet', 'like', $search);
+            });
+        })
+        ->orderByRaw('LOWER(' . $this->sortBy . ') ' . $this->sortDirection)
+        ->get();
+
+    $headers = [
+        'Content-Type' => 'text/csv; charset=UTF-8',
+        'Content-Disposition' => "attachment; filename={$fileName}",
+    ];
+
+    $callback = function () use ($modalidades) {
+
+        $file = fopen('php://output', 'w');
+
+        // BOM UTF-8 para Excel Windows
+        fwrite($file, "\xEF\xBB\xBF");
+
+        fputcsv($file, [
+            'Nombre',
+            'IP',
+            'Ubicación',
+            'Departamento',
+            'AET',
+            'Fecha creación',
+        ], ';');
+
+        foreach ($modalidades as $modalidad) {
+            fputcsv($file, [
+                $modalidad->name,
+                $modalidad->ip,
+                $modalidad->location,
+                $modalidad->department,
+                $modalidad->aet,
+                optional($modalidad->created_at)->format('d/m/Y H:i'),
+            ], ';');
+        }
+
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
 
     #[Computed]
     public function modalidades()
@@ -53,7 +116,11 @@ new #[Title('Modalities')] class extends Component
                 $search = '%' . trim($this->search) . '%';
 
                 $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', $search);
+                    $q->where('name', 'like', $search)
+                      ->orWhere('ip', 'like', $search)
+                      ->orWhere('location', 'like', $search)
+                      ->orWhere('department', 'like', $search)
+                      ->orWhere('aet', 'like', $search);
                 });
             })
             ->orderByRaw('LOWER(' . $this->sortBy . ') ' . $this->sortDirection)
@@ -66,14 +133,16 @@ new #[Title('Modalities')] class extends Component
 <section class="w-full">
     <x-pages::radiology.layout :heading="__('rx.inventory_heading')" :subheading="__('rx.inventory_subheading')">
         <div class="border-1 p-4 rounded-md border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700">
-            <div class="flex mb-4">
-                <flux:input class="flex-1"
+            <div class="flex mb-4 space-x-2">
+                <flux:input icon="magnifying-glass" class="flex-1"
                     wire:model.live.debounce.300ms="search"
-                    placeholder="{{ __('Search modality') }}..."
+                    placeholder="{{ __('rx.search_modality') }}..."
                     clearable
                 />
 
                 <flux:spacer />
+
+                <flux:button wire:click="export">Exportar</flux:button>
 
                 @can('create', App\Models\Modalidad::class)
                     <flux:button variant="primary"
@@ -84,28 +153,9 @@ new #[Title('Modalities')] class extends Component
                 @endcan
             </div>        
 
-            <div class="flex-col space-y-3 mt-6">
+            <div class="flex-col space-y-4 mt-6">
                 @forelse($this->modalidades as $modalidad)
-
                     @include('partials.radiology.modalidad')
-       
-                    <div class="bg-white rounded-md p-6 border-1 border-zinc-200 dark:border-zinc-600">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-semibold text-lg">
-                                {{ $modalidad->name }}
-                            </h3>
-                            @can('modalidades.edit')
-                                <flux:button
-                                    size="xs"
-                                    wire:click="$dispatch('editar-modalidad', { id: {{ $modalidad->id }} })"
-                                >
-                                    Editar
-                                </flux:button>
-                            @endcan
-                        </div>
-                        <p class="text-2xl font-bold text-gray-800">$24,580</p>
-                        <p class="text-sm text-green-600 mt-2">↑ 12.5% from last month</p>
-                    </div>
                 @empty
                     <div class="col-span-full text-center text-gray-500 py-10">
                         No se encontraron modalidades
