@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use App\Models\Modalidad;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -12,146 +11,258 @@ new #[Title('Modalities')] class extends Component
 {
     use WithPagination;
 
-    public string $search = '';
-    public string $sortBy = 'name';
-    public string $sortDirection = 'asc';
+    public array $options = [
 
+        'search' => '',
+
+        'searchFields' => [
+            'aet' => [
+                'label' => 'AE Title',
+                'enabled' => true,
+            ],
+            'ip' => [
+                'label' => 'Dirección IP',
+                'enabled' => true,
+            ],
+            'location' => [
+                'label' => 'Ubicación',
+                'enabled' => true,
+            ],
+            'department' => [
+                'label' => 'Servicio',
+                'enabled' => true,
+            ],
+            'model' => [
+                'label' => 'Modelo',
+                'enabled' => true,
+            ],
+        ],
+
+        'filters' => [
+            'department' => [],
+            'modalidad'  => [],
+        ],
+
+        'sort' => [
+            'by' => 'aet',
+            'direction' => 'asc',
+        ],
+    ];
 
     public function mount()
     {
         $this->authorize('viewAny', Modalidad::class);
     }
 
-    public function sort($column) {
-        if ($this->sortBy === $column) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortBy = $column;
-            $this->sortDirection = 'asc';
-        }
-        $this->resetPage();
-    }
-
-    public function updatedSearch()
+    public function updatedOptions()
     {
         $this->resetPage();
     }
 
-    public function updatedSearchField()
+    public function resetFilters()
     {
+        $this->options['filters'] = [
+            'department' => [],
+            'modalidad'  => [],
+        ];
+
         $this->resetPage();
     }
 
     #[On('modality-created')]
     #[On('modality-updated')]
     #[On('modality-deleted')]
+    #[On('modalities-imported')]
     public function refresh()
     {
         $this->resetPage();
     }
 
-    public function export()
-{
-    $fileName = 'modalidades_' . now()->format('Y-m-d_H-i-s') . '.csv';
-
-    $modalidades = Modalidad::query()
-        ->when(trim($this->search) !== '', function ($query) {
-
-            $search = '%' . trim($this->search) . '%';
-
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', $search)
-                  ->orWhere('ip', 'like', $search)
-                  ->orWhere('location', 'like', $search)
-                  ->orWhere('department', 'like', $search)
-                  ->orWhere('aet', 'like', $search);
-            });
-        })
-        ->orderByRaw('LOWER(' . $this->sortBy . ') ' . $this->sortDirection)
-        ->get();
-
-    $headers = [
-        'Content-Type' => 'text/csv; charset=UTF-8',
-        'Content-Disposition' => "attachment; filename={$fileName}",
-    ];
-
-    $callback = function () use ($modalidades) {
-
-        $file = fopen('php://output', 'w');
-
-        // BOM UTF-8 para Excel Windows
-        fwrite($file, "\xEF\xBB\xBF");
-
-        fputcsv($file, [
-            'Nombre',
-            'IP',
-            'Ubicación',
-            'Departamento',
-            'AET',
-            'Fecha creación',
-        ], ';');
-
-        foreach ($modalidades as $modalidad) {
-            fputcsv($file, [
-                $modalidad->name,
-                $modalidad->ip,
-                $modalidad->location,
-                $modalidad->department,
-                $modalidad->aet,
-                optional($modalidad->created_at)->format('d/m/Y H:i'),
-            ], ';');
-        }
-
-        fclose($file);
-    };
-
-    return response()->stream($callback, 200, $headers);
-}
-
     #[Computed]
     public function modalidades()
     {
-        return Modalidad::query()
-            ->when(trim($this->search) !== '', function ($query) {
-                $search = '%' . trim($this->search) . '%';
+        $query = Modalidad::query();
 
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', $search)
-                      ->orWhere('ip', 'like', $search)
-                      ->orWhere('location', 'like', $search)
-                      ->orWhere('department', 'like', $search)
-                      ->orWhere('aet', 'like', $search);
-                });
-            })
-            ->orderByRaw('LOWER(' . $this->sortBy . ') ' . $this->sortDirection)
-            ->paginate(10);
+        // 🔎 SEARCH
+        $search = trim($this->options['search']);
+
+        if ($search !== '') {
+
+            $search = "%{$search}%";
+
+            $query->where(function ($q) use ($search) {
+
+                foreach ($this->options['searchFields'] as $field => $config) {
+                    if ($config['enabled']) {
+                        $q->orWhere($field, 'like', $search);
+                    }
+                }
+
+            });
+        }
+
+        // 🎯 FILTERS
+
+        $departments = collect($this->options['filters']['department'])
+            ->filter()
+            ->keys()
+            ->values()
+            ->toArray();
+
+        if (!empty($departments)) {
+            $query->whereIn('department', $departments);
+        }
+
+        $modalidades = collect($this->options['filters']['modalidad'])
+            ->filter()
+            ->keys()
+            ->values()
+            ->toArray();
+
+        if (!empty($modalidades)) {
+            $query->whereIn('modalidad', $modalidades);
+        }
+
+        // 🔁 SORT
+        $query->orderBy(
+            $this->options['sort']['by'],
+            $this->options['sort']['direction']
+        );
+
+        return $query->paginate(10);
     }
-
 };
 ?>
+
 
 <section class="w-full">
     <x-pages::radiology.layout :heading="__('rx.inventory_heading')" :subheading="__('rx.inventory_subheading')">
         <div class="border-1 p-4 rounded-md border-zinc-200 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-700">
             <div class="flex mb-4 space-x-2">
-                <flux:input icon="magnifying-glass" class="flex-1"
-                    wire:model.live.debounce.300ms="search"
-                    placeholder="{{ __('rx.search_modality') }}..."
-                    clearable
-                />
+                {{-- BUSCADOR --}}
+                <flux:input.group class="flex-3">
+                    <flux:input
+                        icon="magnifying-glass"
+                        wire:model.live.debounce.300ms="options.search"
+                        placeholder="{{ __('rx.search_modality') }}"
+                        clearable
+                    />
+
+                    {{-- CAMPOS DE BÚSQUEDA --}}
+                    <flux:dropdown>
+                        <flux:button icon:trailing="chevron-down">
+                            Campo
+                        </flux:button>
+
+                        <flux:menu keep-open>
+                            @foreach($options['searchFields'] as $field => $config)
+                                <flux:menu.checkbox
+                                    wire:model.live="options.searchFields.{{ $field }}.enabled"
+                                >
+                                    {{ $config['label'] }}
+                                </flux:menu.checkbox>
+                            @endforeach
+                        </flux:menu>
+                    </flux:dropdown>
+                </flux:input.group>
+
+                {{-- OPCIONES --}}
+                <flux:dropdown>
+                    <flux:button icon:trailing="chevron-down">
+                        Opciones
+                    </flux:button>
+
+                    <flux:menu keep-open class="w-64">
+                        {{-- ORDEN --}}
+                        <flux:menu.submenu heading="Ordenar por" keep-open>
+                            <flux:menu.checkbox wire:model.live="options.sort.by" value="aet">
+                                AET
+                            </flux:menu.checkbox>
+
+                            <flux:menu.checkbox wire:model.live="options.sort.by" value="department">
+                                Servicio
+                            </flux:menu.checkbox>
+
+                            <flux:menu.checkbox wire:model.live="options.sort.by" value="centre">
+                                Centro
+                            </flux:menu.checkbox>
+
+                            <flux:menu.separator />
+
+                            <flux:menu.checkbox wire:model.live="options.sort.direction" value="asc">
+                                Ascendente
+                            </flux:menu.checkbox>
+
+                            <flux:menu.checkbox wire:model.live="options.sort.direction" value="desc">
+                                Descendente
+                            </flux:menu.checkbox>
+                        </flux:menu.submenu>
+
+                        {{-- FILTROS --}}
+                        <flux:menu.submenu heading="Filtros" keep-open>
+                            {{-- DEPARTMENT --}}
+                            <flux:menu.submenu heading="Departamento" keep-open>
+                                @foreach(
+                                    \App\Models\Modalidad::select('department')
+                                        ->distinct()
+                                        ->pluck('department')
+                                        ->filter()
+                                        ->sort()
+                                        ->values()
+                                    as $dep
+                                )
+                                    <flux:menu.checkbox
+                                        wire:key="filter-department-{{ md5($dep) }}"
+                                        wire:model.live="options.filters.department.{{ $dep }}"
+                                    >
+                                        {{ $dep }}
+                                    </flux:menu.checkbox>
+                                @endforeach
+                            </flux:menu.submenu>
+
+                            {{-- MODALIDAD --}}
+                            <flux:menu.submenu heading="Modalidad" keep-open>
+                                @foreach(
+                                    \App\Models\Modalidad::select('modalidad')
+                                        ->distinct()
+                                        ->pluck('modalidad')
+                                        ->filter()
+                                        ->sort()
+                                        ->values()
+                                    as $mod
+                                )
+                                    <flux:menu.checkbox
+                                        wire:key="filter-modalidad-{{ md5($mod) }}"
+                                        wire:model.live="options.filters.modalidad.{{ $mod }}"
+                                    >
+                                        {{ $mod }}
+                                    </flux:menu.checkbox>
+                                @endforeach
+                            </flux:menu.submenu>
+                        </flux:menu.submenu>
+                    </flux:menu>
+                </flux:dropdown>
+
+                <flux:button variant="ghost" wire:click="resetFilters">
+                    Limpiar filtros
+                </flux:button>
 
                 <flux:spacer />
 
-                <flux:button wire:click="export">Exportar</flux:button>
+                <flux:button.group>
+                    <livewire:radiology.import />
+                    <livewire:radiology.export />
+                </flux:button.group>
 
                 @can('create', App\Models\Modalidad::class)
-                    <flux:button variant="primary"
+                    <flux:button
+                        variant="primary"
                         wire:click="$dispatch('create-modality')"
                     >
                         {{ __('rx.add_modality') }}
                     </flux:button>
                 @endcan
-            </div>        
+            </div>
 
             <div class="flex-col space-y-4 mt-6">
                 @forelse($this->modalidades as $modalidad)
@@ -170,5 +281,6 @@ new #[Title('Modalities')] class extends Component
         </div>
 
         <livewire:radiology.create />
+        <livewire:radiology.edit />
     </x-pages::radiology.layout>
 </section>

@@ -78,7 +78,8 @@ new class extends Component {
                     <div class="border rounded-md p-3 space-y-4"> 
                         <flux:checkbox.group wire:key="module-{{ $module }}"> 
                             <flux:field class="flex!"> 
-                                <flux:label class="">{{ Str::headline($module) }}</flux:label> 
+                                <flux:label class="">{{ Str::headline($module) }}</flux:label>
+                                
                                 <flux:checkbox.all /> 
                             </flux:field> 
 

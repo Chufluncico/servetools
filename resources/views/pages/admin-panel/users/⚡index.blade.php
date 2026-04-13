@@ -102,8 +102,11 @@ new #[Title('Users Administration')] class extends Component
                     @foreach ($this->users as $user)
                         <flux:table.row :key="$user->id">
                             <flux:table.cell class="flex items-center gap-3">
-                                <flux:avatar size="xs"
+                                <flux:avatar 
+                                    size="xs"
                                     :initials="$user->initials()"
+                                    color="auto"
+                                    color:seed="{{ $user->id }}"
                                 />
                                 {{ $user->name }}
                             </flux:table.cell>

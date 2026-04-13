@@ -9,7 +9,8 @@ use Livewire\Attributes\Computed;
 new class extends Component {
 
     public bool $showModal = false;
-    public string $name = '';
+    public string $aet = '';
+    public string $ip = '';
 
 
     #[On('create-modality')]
@@ -23,20 +24,20 @@ new class extends Component {
     {
         $this->authorize('create', Modalidad::class);
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:modalidades,name'],
+            'aet' => ['required', 'string', 'max:255', 'unique:modalidades,aet'],
             'ip' => ['ip', 'unique:modalidades,ip'],
         ]);
         $modality = Modalidad::create([
-            'name' => $validated['name'],
+            'aet' => $validated['aet'],
         ]);
-        $this->dispatch('modality-created', name: $modality->name);
+        $this->dispatch('modality-created', aet: $modality->aet);
         $this->showModal = false;
     }
 
     public function updatedShowModal($value)
     {
         if (!$value) {
-            $this->reset(['name']);
+            $this->reset(['aet']);
             $this->resetErrorBag();
             $this->resetValidation();
         }
@@ -46,25 +47,20 @@ new class extends Component {
 };
 ?>
 
-<flux:modal wire:model.self="showModal" :dismissible="false" :closable="false" flyout position="right">
+<flux:modal wire:model.self="showModal" :dismissible="false" :closable="false">
     <div class="space-y-6">
-        <flux:heading size="lg">
-            {{ __('rx.new_modality') }}
-        </flux:heading>
+        <flux:heading size="lg">{{ __('rx.new_modality') }}</flux:heading>
 
-        <flux:input wire:model="name" label="{{ __('rx.modality_name') }}" />
+        <flux:input wire:model="aet" label="{{ __('AE Title') }}" badge="Required"/>
 
-        <flux:field>
-            <flux:label>{{ __('rx.ip_address') }}</flux:label>
-
-            <flux:input 
-                wire:model="ip" 
-                pattern="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" 
-                x-mask:dynamic="[ ...$input.split('.').map( (x, index, array) => '9'.repeat( x.length > 0 && x.length < 3 ? x.length + ( index === array.length -1 ? 1 : 0 ) : 3 ) ),'999','999','999','999'].splice(0,4).join('.')"
-            />
-
-            <flux:error name="ip" />
-        </flux:field>
+        <flux:input 
+            wire:model="ip"
+            icon="rectangle-ellipsis"
+            label="{{ __('rx.ip_address') }}"
+            placeholder="192.168.1.1"
+            pattern="\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" 
+            x-mask:dynamic="[ ...$input.split('.').map( (x, index, array) => '9'.repeat( x.length > 0 && x.length < 3 ? x.length + ( index === array.length -1 ? 1 : 0 ) : 3 ) ),'999','999','999','999'].splice(0,4).join('.')"
+        />
 
         <div class="flex justify-end gap-3">
             <flux:modal.close>

@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
 
-class RadiologiaPermissionSeeder extends Seeder
+class RadiologiaPermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

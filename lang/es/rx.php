@@ -11,6 +11,7 @@ return [
     */
 
     'add_modality' => 'Nueva modalidad',
+    'edit_modality' => 'Editar modalidad',
     'modalities' => 'Modalidades',
     'modality_name' => 'Nombre modalidad',
     'new_modality' => 'Nueva modalidad',

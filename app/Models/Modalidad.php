@@ -10,7 +10,21 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 
 #[Table('modalidades')]
-#[Fillable(['name', 'ip', 'extra_data'])]
+#[Fillable([
+        'aet',
+        'department',
+        'centre',
+        'location',
+        'ip',
+        'syngo',
+        'observations',
+        'model',
+        'modalidad',
+        'machine',
+        'station',
+        'request_date',
+        'extra_data',
+    ])]
 class Modalidad extends Model
 {
     use SoftDeletes;
@@ -19,7 +33,13 @@ class Modalidad extends Model
     protected function casts(): array
     {
         return [
-            'extra_data' => 'array',
+            'syngo'       => 'boolean',
+            'request_date'=> 'date',
+            'extra_data'  => 'array',
         ];
     }
 }
+
+
+
+            

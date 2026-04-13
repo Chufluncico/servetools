@@ -13,13 +13,19 @@ return new class extends Migration
     {
         Schema::create('modalidades', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('aet');
-            $table->string('department');
-            $table->string('location');
-            $table->ipAddress('ip');
-            $table->boolean('syngo');
-            $table->json('extra_data');
+            $table->string('aet')->nullable();
+            $table->string('department')->nullable();
+            $table->string('centre')->nullable();
+            $table->string('location')->nullable();
+            $table->ipAddress('ip')->nullable();
+            $table->boolean('syngo')->nullable()->default(false);
+            $table->text('observations')->nullable();
+            $table->string('model')->nullable();
+            $table->string('modalidad')->nullable();
+            $table->string('machine')->nullable();
+            $table->string('station')->nullable();
+            $table->date('request_date')->nullable();
+            $table->json('extra_data')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

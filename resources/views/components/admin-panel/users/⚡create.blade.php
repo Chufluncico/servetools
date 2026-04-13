@@ -71,6 +71,7 @@ new class extends Component {
         <div class="grid md:grid-cols-2 gap-4">
             <div class="space-y-5">
                 <flux:input wire:model="name" label="{{ __('User name') }}" />
+
                 <flux:input wire:model="email" label="{{ __('User mail') }}" />
 
                 <flux:input 
@@ -85,6 +86,7 @@ new class extends Component {
                     label="{{ __('Password confirmation') }}"
                 />
             </div>
+            
             <div >
                 <div>
                     <label class="block text-sm mb-2">{{ __('Roles') }}</label>
